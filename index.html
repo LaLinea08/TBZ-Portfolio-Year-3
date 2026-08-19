@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <meta name="description" content="School portfolio – projects, documentation and assignments.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📓</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">
+        <strong>Portfolio</strong>
+        <small>Year 3</small>
+      </span>
+    </a>
+
+    <button id="theme-toggle" class="icon-btn" type="button"
+            aria-label="Switch colour scheme" title="Light / dark">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <g stroke-linecap="round">
+          <path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/>
+        </g>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- ============ LIST VIEW ============ -->
+  <section id="view-list">
+    <div class="intro">
+      <h1>My work</h1>
+      <p class="lede">A collection of projects, documentation and assignments from school.</p>
+    </div>
+
+    <div class="controls" role="search">
+      <div class="search-field">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6" stroke-linecap="round"/>
+        </svg>
+        <input id="search" type="search" placeholder="Search by title, text, subject …"
+               aria-label="Search entries" autocomplete="off" spellcheck="false">
+        <button id="search-clear" class="clear-btn" type="button" aria-label="Clear search" hidden>&times;</button>
+      </div>
+
+      <label class="select-field">
+        <span class="sr-only">Filter by subject</span>
+        <select id="subject-filter" aria-label="Filter by subject">
+          <option value="">All subjects</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="tag-bar" class="tag-bar" role="group" aria-label="Filter by tag"></div>
+
+    <p id="result-count" class="result-count" aria-live="polite"></p>
+
+    <div id="grid" class="grid"></div>
+
+    <!-- Empty / error / loading placeholders -->
+    <div id="state-loading" class="state" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading entries …</p>
+    </div>
+
+    <div id="state-empty" class="state" hidden>
+      <div class="state-icon" aria-hidden="true">📭</div>
+      <h2>No entries yet</h2>
+      <p>As soon as the first piece of work is added, it will show up here.</p>
+    </div>
+
+    <div id="state-nomatch" class="state" hidden>
+      <div class="state-icon" aria-hidden="true">🔍</div>
+      <h2>Nothing found</h2>
+      <p>No entries match this search. Try a different term or clear the filters.</p>
+      <button id="reset-filters" class="btn" type="button">Clear filters</button>
+    </div>
+
+    <div id="state-error" class="state state-error" hidden>
+      <div class="state-icon" aria-hidden="true">⚠️</div>
+      <h2>Entries could not be loaded</h2>
+      <p id="error-detail" class="mono"></p>
+      <p class="muted"><code>data/entries.json</code> may be missing, or it contains invalid JSON.</p>
+      <button id="retry-load" class="btn" type="button">Try again</button>
+    </div>
+  </section>
+
+  <!-- ============ DETAIL VIEW ============ -->
+  <article id="view-detail" hidden>
+    <a class="back-link" href="#/">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to overview
+    </a>
+
+    <header class="detail-head">
+      <div id="detail-meta" class="meta-row"></div>
+      <h1 id="detail-title"></h1>
+      <p id="detail-summary" class="lede"></p>
+      <div id="detail-tags" class="tag-list"></div>
+    </header>
+
+    <figure id="detail-cover" class="detail-cover" hidden>
+      <img id="detail-cover-img" alt="">
+    </figure>
+
+    <div id="detail-body" class="prose"></div>
+
+    <section id="detail-gallery-wrap" class="gallery-wrap" hidden>
+      <h2 class="gallery-title">Images</h2>
+      <div id="detail-gallery" class="gallery"></div>
+    </section>
+  </article>
+
+  <!-- Detail view: entry not found -->
+  <div id="state-notfound" class="state" hidden>
+    <div class="state-icon" aria-hidden="true">🧭</div>
+    <h2>Entry not found</h2>
+    <p>This link points to an entry that does not exist (any more).</p>
+    <a class="btn" href="#/">Go to overview</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Portfolio · Year 3 · <span id="year"></span></p>
+  </div>
+</footer>
+
+<!-- Markdown rendering + sanitising, from CDN (no build step) -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

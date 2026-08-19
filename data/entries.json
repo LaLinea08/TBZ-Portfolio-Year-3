@@ -1,0 +1,30 @@
+[
+  {
+    "id": "demo-2",
+    "slug": "welcome-to-the-portfolio",
+    "title": "Welcome to the portfolio",
+    "date": "2026-08-19",
+    "subject": "General",
+    "tags": ["setup", "guide"],
+    "summary": "This example entry shows how a piece of work is presented. You can edit or delete it in the admin area.",
+    "body": "## How does this work?\n\nEvery entry on this site lives in `data/entries.json`. The page loads that file at runtime and builds the overview from it — there is **no** HTML per entry.\n\n### Creating new entries\n\n1. Open `admin.html` (deliberately not linked from anywhere).\n2. Enter your GitHub Personal Access Token.\n3. Fill in the form, drag images into the drop area and save.\n\n> After saving it takes about a minute for GitHub Pages to publish the change.\n\n### What Markdown can do\n\n- Lists, **bold**, *italic* and `code`\n- Links such as [github.com](https://github.com)\n- Headings, quotes, tables\n\n| Field | Meaning |\n| --- | --- |\n| `subject` | Subject, shown as a filter |\n| `tags` | Keywords used by the search |\n| `coverImage` | Image shown in the overview |\n\nUmlauts, accents and emoji 🎓 work without any trouble, by the way.",
+    "coverImage": null,
+    "images": [],
+    "createdAt": "2026-08-19T08:00:00.000Z",
+    "updatedAt": "2026-08-19T08:00:00.000Z"
+  },
+  {
+    "id": "demo-1",
+    "slug": "sample-project-a-website-from-scratch",
+    "title": "Sample project: a website from scratch",
+    "date": "2026-05-04",
+    "subject": "Computer Science",
+    "tags": ["html", "css", "project work"],
+    "summary": "A second example entry, so that the search and the filters have something to work with.",
+    "body": "## Starting point\n\nThe task was to build a small website without using a framework.\n\n## Approach\n\n1. Built the structure in HTML\n2. Solved the layout with CSS Grid\n3. Added interaction with a little JavaScript\n\n## Reflection\n\nI learned the most about responsive design. Next time I would start with the mobile layout much earlier.",
+    "coverImage": null,
+    "images": [],
+    "createdAt": "2026-05-04T08:00:00.000Z",
+    "updatedAt": "2026-05-04T08:00:00.000Z"
+  }
+]

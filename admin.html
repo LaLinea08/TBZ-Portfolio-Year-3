@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Portfolio – Admin</title>
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+</head>
+<body class="admin">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-text">
+        <strong>Portfolio Admin</strong>
+        <small id="repo-label">not connected</small>
+      </span>
+    </div>
+
+    <div class="header-actions">
+      <span id="user-badge" class="user-badge" hidden></span>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Switch colour scheme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <g stroke-linecap="round">
+            <path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/>
+          </g>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/>
+        </svg>
+      </button>
+      <button id="logout-btn" class="btn btn-ghost" type="button" hidden>Log out / forget token</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= LOGIN ================= -->
+  <section id="login-view" class="panel login-panel" hidden>
+    <h1>Sign in</h1>
+    <p class="muted">
+      To edit this site you need a GitHub Personal Access Token with
+      <strong>Contents: Read and write</strong> for this repository only.
+      The token is stored solely in <em>your</em> browser (localStorage) and is
+      never committed to the repository.
+    </p>
+
+    <form id="login-form" class="form" autocomplete="off">
+      <div class="field">
+        <label for="token-input">Personal Access Token</label>
+        <input id="token-input" type="password" placeholder="github_pat_… or ghp_…" required
+               autocomplete="off" spellcheck="false">
+        <p class="hint">See <code>README.md</code> for how to create the token.</p>
+      </div>
+
+      <details class="repo-details">
+        <summary>Repository settings</summary>
+        <div class="field-row">
+          <div class="field">
+            <label for="owner-input">Owner (user or organisation)</label>
+            <input id="owner-input" type="text" placeholder="username" spellcheck="false">
+          </div>
+          <div class="field">
+            <label for="repo-input">Repository</label>
+            <input id="repo-input" type="text" placeholder="my-portfolio" spellcheck="false">
+          </div>
+          <div class="field">
+            <label for="branch-input">Branch</label>
+            <input id="branch-input" type="text" placeholder="main" spellcheck="false">
+          </div>
+        </div>
+        <p class="hint">
+          Detected automatically on <code>*.github.io</code>. The branch must be the one
+          GitHub&nbsp;Pages publishes from.
+        </p>
+      </details>
+
+      <button class="btn" type="submit">Verify token &amp; sign in</button>
+      <p id="login-error" class="error-text" hidden></p>
+    </form>
+  </section>
+
+  <!-- ================= APP ================= -->
+  <section id="app-view" hidden>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab" id="tab-editor" role="tab" aria-selected="true" aria-controls="pane-editor">Entry</button>
+      <button class="tab" id="tab-list"   role="tab" aria-selected="false" aria-controls="pane-list">All entries</button>
+    </nav>
+
+    <!-- ---------- editor ---------- -->
+    <div id="pane-editor" role="tabpanel" aria-labelledby="tab-editor">
+      <div class="editor-head">
+        <h1 id="editor-title">New entry</h1>
+        <button id="cancel-edit" class="btn btn-ghost" type="button" hidden>Cancel editing</button>
+      </div>
+
+      <form id="entry-form" class="form panel">
+        <input type="hidden" id="entry-id">
+
+        <div class="field">
+          <label for="f-title">Title <span class="req">*</span></label>
+          <input id="f-title" type="text" required maxlength="200" placeholder="e.g. Web shop project M133">
+          <p class="hint">Slug: <code id="slug-preview">–</code></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="f-date">Date <span class="req">*</span></label>
+            <input id="f-date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="f-subject">Subject</label>
+            <input id="f-subject" type="text" list="subject-list" placeholder="e.g. Computer Science">
+            <datalist id="subject-list"></datalist>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-tags">Tags <span class="muted">(comma separated)</span></label>
+          <input id="f-tags" type="text" placeholder="html, css, group work">
+        </div>
+
+        <div class="field">
+          <label for="f-summary">Short summary</label>
+          <textarea id="f-summary" rows="2" maxlength="400"
+                    placeholder="One or two sentences for the overview."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="f-body">Body <span class="muted">(Markdown)</span></label>
+          <div class="md-split">
+            <textarea id="f-body" rows="16" spellcheck="true"
+                      placeholder="## Starting point&#10;&#10;Describe your work here …"></textarea>
+            <div class="md-preview">
+              <div class="md-preview-label">Preview</div>
+              <div id="md-preview" class="prose"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Images</label>
+          <div id="dropzone" class="dropzone" tabindex="0" role="button"
+               aria-label="Drag images here or click to choose files">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4M12 4L8 8M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 15v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-3" stroke-linecap="round"/>
+            </svg>
+            <p><strong>Drag images here</strong> or click to choose files</p>
+            <p class="hint">PNG, JPG, WEBP, GIF, SVG · max. approx. 5 MB per image</p>
+          </div>
+          <input id="file-input" type="file" accept="image/*" multiple hidden>
+          <div id="image-list" class="image-list"></div>
+          <p class="hint">Click an image to make it the <strong>cover image</strong>.</p>
+        </div>
+
+        <div class="form-actions">
+          <button id="save-btn" class="btn" type="submit">Save entry</button>
+          <button id="reset-btn" class="btn btn-ghost" type="button">Clear form</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ---------- entry list ---------- -->
+    <div id="pane-list" role="tabpanel" aria-labelledby="tab-list" hidden>
+      <div class="editor-head">
+        <h1>All entries</h1>
+        <button id="reload-btn" class="btn btn-ghost" type="button">Reload</button>
+      </div>
+      <div id="admin-list" class="admin-list"></div>
+    </div>
+
+  </section>
+</main>
+
+<!-- status log, fixed bottom right -->
+<div id="status-log" class="status-log" aria-live="polite" aria-atomic="false"></div>
+
+<!-- confirm dialog -->
+<div id="confirm-backdrop" class="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <h2 id="confirm-title">Delete entry?</h2>
+    <p id="confirm-text" class="muted"></p>
+    <div class="modal-actions">
+      <button id="confirm-cancel" class="btn btn-ghost" type="button">Cancel</button>
+      <button id="confirm-ok" class="btn btn-danger" type="button">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
