@@ -37,19 +37,17 @@
   {
     "id": "demo-1",
     "slug": "sample-project-a-website-from-scratch",
-    "title": "Sample project: a website from scratch",
+    "title": "About Me",
     "date": "2026-05-04",
-    "subject": "Computer Science",
+    "subject": "Me",
     "tags": [
-      "html",
-      "css",
-      "project work"
+      "About Me"
     ],
-    "summary": "A second example entry, so that the search and the filters have something to work with.",
-    "body": "## Starting point\n\nThe task was to build a small website without using a framework.\n\n## Approach\n\n1. Built the structure in HTML\n2. Solved the layout with CSS Grid\n3. Added interaction with a little JavaScript\n\n## Reflection\n\nI learned the most about responsive design. Next time I would start with the mobile layout much earlier.",
+    "summary": "",
+    "body": "## About Me\n",
     "coverImage": null,
     "images": [],
     "createdAt": "2026-05-04T08:00:00.000Z",
-    "updatedAt": "2026-05-04T08:00:00.000Z"
+    "updatedAt": "2026-08-26T07:29:52.519Z"
   }
 ]
