@@ -8,23 +8,23 @@
 
 :root {
   /* --- surfaces --- */
-  --bg-0:          #c9cac7;                     /* page backdrop */
+  --bg-0:          #d1d2cf;                     /* page backdrop */
   --bg-1:          #d7d8d5;
   --bg-2:          #e2e3e0;
-  --surface:       rgba(255, 255, 255, .64);    /* glass panel */
-  --surface-hi:    rgba(255, 255, 255, .84);    /* hovered / raised glass */
+  --surface:       rgba(255, 255, 255, .30);    /* glass panel */
+  --surface-hi:    rgba(255, 255, 255, .48);    /* hovered / raised glass */
   --surface-solid: #e6e7e4;                     /* opaque fallback */
   --sunken:        rgba(0, 0, 0, .045);         /* inset wells, code, thumbs */
 
   /* --- lines --- */
   --edge-light:    rgba(255, 255, 255, .92);    /* top highlight of a panel */
-  --border:        rgba(28, 30, 27, .10);
-  --border-strong: rgba(28, 30, 27, .20);
+  --border:        rgba(28, 30, 27, .16);
+  --border-strong: rgba(28, 30, 27, .28);
 
   /* --- ink --- */
   --text:          #1c1e1b;
-  --text-muted:    #6d716c;
-  --text-faint:    #5b5f57;
+  --text-muted:    #4e514a;
+  --text-faint:    #585b54;
 
   /* --- accents ---------------------------------------------------
      The design stays monochrome: colour appears only as linings —
@@ -71,7 +71,7 @@
   --radius-sm:  12px;
   --radius-pill: 999px;
 
-  --blur: saturate(180%) blur(28px);
+  --blur: saturate(190%) blur(40px);
   --line-hue-range: 34deg;                      /* how far the linings drift in hue */
   --wrap: 1120px;
 
@@ -83,18 +83,18 @@
   --bg-0:          #0e1116;
   --bg-1:          #171b22;
   --bg-2:          #1e242d;
-  --surface:       rgba(255, 255, 255, .09);
-  --surface-hi:    rgba(255, 255, 255, .14);
+  --surface:       rgba(255, 255, 255, .055);
+  --surface-hi:    rgba(255, 255, 255, .10);
   --surface-solid: #23272e;
   --sunken:        rgba(0, 0, 0, .26);
 
   --edge-light:    rgba(255, 255, 255, .16);
-  --border:        rgba(255, 255, 255, .10);
-  --border-strong: rgba(255, 255, 255, .20);
+  --border:        rgba(255, 255, 255, .15);
+  --border-strong: rgba(255, 255, 255, .26);
 
   --text:          #e8ebf0;
-  --text-muted:    #98a2b3;
-  --text-faint:    #868f9d;
+  --text-muted:    #aeb6c2;
+  --text-faint:    #9ea7b4;
 
   --ink:           #ecefe8;                     /* inverted: the pill goes light */
   --ink-text:      #14171a;
