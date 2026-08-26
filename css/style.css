@@ -37,9 +37,17 @@
   --ink-text:      #f2f3f0;
   --accent:        #3f44c4;
   --accent-2:      #0a7c93;
+  --accent-3:      #7b3fa8;
   --accent-soft:   rgba(63, 68, 196, .10);
-  --line-accent:   linear-gradient(90deg, var(--accent), var(--accent-2));
-  --line-accent-v: linear-gradient(180deg, var(--accent), var(--accent-2));
+  /* First and last stop are identical so the gradient tiles seamlessly and
+     the flow animation loops without a visible jump. */
+  --line-accent:   linear-gradient(90deg,
+                     var(--accent), var(--accent-2), var(--accent-3),
+                     var(--accent-2), var(--accent));
+  --line-accent-v: linear-gradient(180deg,
+                     var(--accent), var(--accent-2), var(--accent-3),
+                     var(--accent-2), var(--accent));
+  --line-flow:     16s;
 
   --mint:          #2fa36b;
   --warn:          #a06a12;
@@ -89,6 +97,7 @@
   --ink-text:      #14171a;
   --accent:        #9aa5ff;
   --accent-2:      #5fe0f5;
+  --accent-3:      #c79bff;
   --accent-soft:   rgba(154, 165, 255, .14);
 
   --mint:          #57d39b;
@@ -114,7 +123,12 @@
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    /* without this an infinite animation would strobe instead of stopping */
+    animation-iteration-count: 1 !important;
+  }
 }
 
 body {
@@ -614,4 +628,49 @@ mark {
   .select-field, #subject-filter { width: 100%; }
   .state { padding: 44px 18px; }
   .detail-cover { padding: 6px; }
+}
+
+
+/* =========================================================
+   Animated linings
+   The gradient is drawn three times wider than its element and slid
+   sideways, so the colour appears to flow along each line. Because the
+   gradient's first and last stop are the same, the loop is seamless.
+   ========================================================= */
+
+/* The gradient is 3x the element, so a 150% position shift moves it by
+   exactly one tile — one complete colour cycle per --line-flow. */
+@keyframes line-flow {
+  from { background-position:   0% 50%; }
+  to   { background-position: 150% 50%; }
+}
+@keyframes line-flow-v {
+  from { background-position: 50%   0%; }
+  to   { background-position: 50% 150%; }
+}
+
+.site-header::after,
+.intro::before,
+.detail-head::before,
+.gallery-wrap::before,
+.site-footer::before,
+.card::before,
+.prose hr {
+  background-size: 300% 100%;
+  animation: line-flow var(--line-flow) linear infinite;
+}
+
+/* the vertical rail beside a quote flows downwards instead */
+.prose blockquote::before {
+  background-size: 100% 300%;
+  animation: line-flow-v var(--line-flow) linear infinite;
+}
+
+/* hovering a card speeds its lining up as well as brightening it */
+.card:hover::before { animation-duration: 4s; }
+
+/* the brand mark drifts through the same colours */
+.brand-mark {
+  background-size: 300% 300%;
+  animation: line-flow calc(var(--line-flow) * 1.5) linear infinite;
 }

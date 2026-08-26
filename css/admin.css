@@ -417,3 +417,12 @@ kbd {
   .tabs { display: flex; width: 100%; }
   .tab { flex: 1; }
 }
+
+
+/* Animated linings, matching the public site (see css/style.css). */
+.panel::before,
+.deploy-bar::before {
+  background-size: 300% 100%;
+  animation: line-flow var(--line-flow) linear infinite;
+}
+.md-preview-label { animation: line-flow var(--line-flow) linear infinite; }
