@@ -7,43 +7,53 @@
    ========================================================= */
 
 :root {
+  /* -----------------------------------------------------------------
+     Palette carried over from last year's site (lalinea08.github.io):
+       #1E1E24  charcoal, slightly violet
+       #F4E9CD  warm cream
+       #25252c  raised charcoal
+     Dark mode is that site's scheme. Light mode inverts it the same way
+     the old header did — charcoal type on cream.
+     ----------------------------------------------------------------- */
+
   /* --- surfaces --- */
-  --bg-0:          #c9cac7;                     /* page backdrop */
-  --bg-1:          #d7d8d5;
-  --bg-2:          #e2e3e0;
-  --surface:       rgba(255, 255, 255, .46);    /* glass panel */
-  --surface-hi:    rgba(255, 255, 255, .68);    /* hovered / raised glass */
-  --surface-solid: #e6e7e4;                     /* opaque fallback */
-  --sunken:        rgba(0, 0, 0, .045);         /* inset wells, code, thumbs */
+  --bg-0:          #e2d5b3;                     /* page backdrop */
+  --bg-1:          #eae0c6;
+  --bg-2:          #f1ead7;
+  --surface:       rgba(255, 253, 247, .74);    /* glass panel */
+  --surface-hi:    rgba(255, 255, 252, .93);
+  --surface-solid: #fbf6ea;
+  --sunken:        rgba(30, 30, 36, .055);
 
   /* --- lines --- */
-  --edge-light:    rgba(255, 255, 255, .75);    /* top highlight of a panel */
-  --border:        rgba(28, 30, 27, .10);
-  --border-strong: rgba(28, 30, 27, .20);
+  --edge-light:    rgba(255, 255, 255, .8);
+  --border:        rgba(30, 30, 36, .12);
+  --border-strong: rgba(30, 30, 36, .24);
 
   /* --- ink --- */
-  --text:          #1c1e1b;
-  --text-muted:    #6d716c;
-  --text-faint:    #8b8f89;
+  --text:          #1e1e24;
+  --text-muted:    #5d5b56;
+  --text-faint:    #635f55;
 
   /* --- accents --- */
-  --ink:           #1f221e;                     /* the "dark pill" accent */
-  --ink-text:      #f2f3f0;
-  --accent:        #2c302b;                     /* links, focus */
-  --accent-soft:   rgba(31, 34, 30, .07);
-  --mint:          #2fa36b;
-  --danger:        #b3382c;
+  --ink:           #1e1e24;                     /* the "dark pill" accent */
+  --ink-text:      #f4e9cd;
+  --accent:        #2a2a32;
+  --accent-soft:   rgba(30, 30, 36, .07);
+  --mint:          #3f6b4c;                     /* success / highlight */
+  --warn:          #8a5a1b;
+  --danger:        #a63b29;
 
-  /* --- shadows: a soft drop plus an inner top highlight --- */
+  /* --- shadows: warm, so they sit on cream instead of greying it --- */
   --shadow-sm:
-      0 1px 1px rgba(255, 255, 255, .55) inset,
-      0 1px 2px rgba(20, 22, 19, .06),
-      0 4px 12px rgba(20, 22, 19, .07);
+      0 1px 1px rgba(255, 255, 255, .6) inset,
+      0 1px 2px rgba(46, 38, 20, .07),
+      0 4px 12px rgba(46, 38, 20, .08);
   --shadow-md:
-      0 1px 1px rgba(255, 255, 255, .65) inset,
-      0 2px 6px rgba(20, 22, 19, .07),
-      0 16px 34px rgba(20, 22, 19, .13);
-  --shadow-inset: inset 0 1px 2px rgba(20, 22, 19, .10);
+      0 1px 1px rgba(255, 255, 255, .7) inset,
+      0 2px 6px rgba(46, 38, 20, .08),
+      0 16px 34px rgba(46, 38, 20, .15);
+  --shadow-inset: inset 0 1px 2px rgba(46, 38, 20, .12);
 
   --radius-lg:  22px;
   --radius:     16px;
@@ -58,36 +68,37 @@
 }
 
 [data-theme="dark"] {
-  --bg-0:          #191b18;
-  --bg-1:          #202320;
-  --bg-2:          #272a26;
-  --surface:       rgba(255, 255, 255, .055);
-  --surface-hi:    rgba(255, 255, 255, .095);
-  --surface-solid: #242723;
+  --bg-0:          #151519;
+  --bg-1:          #1e1e24;                     /* the original background */
+  --bg-2:          #26262f;                     /* the original raised surface */
+  --surface:       rgba(244, 233, 205, .068);   /* cream at low alpha */
+  --surface-hi:    rgba(244, 233, 205, .12);
+  --surface-solid: #26262f;
   --sunken:        rgba(0, 0, 0, .26);
 
-  --edge-light:    rgba(255, 255, 255, .10);
-  --border:        rgba(255, 255, 255, .10);
-  --border-strong: rgba(255, 255, 255, .20);
+  --edge-light:    rgba(244, 233, 205, .10);
+  --border:        rgba(244, 233, 205, .13);
+  --border-strong: rgba(244, 233, 205, .27);
 
-  --text:          #eceee9;
-  --text-muted:    #9ca19a;
-  --text-faint:    #7d827b;
+  --text:          #f4e9cd;                     /* the original text colour */
+  --text-muted:    #b4ac96;
+  --text-faint:    #9e9685;
 
-  --ink:           #ecefe8;                     /* inverted: the pill goes light */
-  --ink-text:      #1a1c19;
-  --accent:        #dfe3db;
-  --accent-soft:   rgba(255, 255, 255, .08);
-  --mint:          #57d39b;
-  --danger:        #ef8577;
+  --ink:           #f4e9cd;                     /* inverted: the pill goes cream */
+  --ink-text:      #1e1e24;
+  --accent:        #f4e9cd;
+  --accent-soft:   rgba(244, 233, 205, .10);
+  --mint:          #a3c9a8;
+  --warn:          #e0b972;
+  --danger:        #e8907f;
 
   --shadow-sm:
-      0 1px 0 rgba(255, 255, 255, .05) inset,
-      0 2px 6px rgba(0, 0, 0, .38);
+      0 1px 0 rgba(244, 233, 205, .06) inset,
+      0 2px 6px rgba(0, 0, 0, .40);
   --shadow-md:
-      0 1px 0 rgba(255, 255, 255, .07) inset,
-      0 18px 40px rgba(0, 0, 0, .52);
-  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, .45);
+      0 1px 0 rgba(244, 233, 205, .08) inset,
+      0 18px 40px rgba(0, 0, 0, .55);
+  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, .48);
 }
 
 * { box-sizing: border-box; }
@@ -162,7 +173,7 @@ a { color: var(--accent); }
 .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
 .brand-mark {
   width: 36px; height: 36px; border-radius: 12px; flex: none;
-  background: var(--ink);
+  background: linear-gradient(145deg, #f4e9cd 0%, #d8c9a2 48%, #1e1e24 48.5%, #2a2a32 100%);
   box-shadow: var(--shadow-sm);
   position: relative;
 }
