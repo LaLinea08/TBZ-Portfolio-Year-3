@@ -7,53 +7,54 @@
    ========================================================= */
 
 :root {
-  /* -----------------------------------------------------------------
-     Palette carried over from last year's site (lalinea08.github.io):
-       #1E1E24  charcoal, slightly violet
-       #F4E9CD  warm cream
-       #25252c  raised charcoal
-     Dark mode is that site's scheme. Light mode inverts it the same way
-     the old header did — charcoal type on cream.
-     ----------------------------------------------------------------- */
-
   /* --- surfaces --- */
-  --bg-0:          #e2d5b3;                     /* page backdrop */
-  --bg-1:          #eae0c6;
-  --bg-2:          #f1ead7;
-  --surface:       rgba(255, 253, 247, .74);    /* glass panel */
-  --surface-hi:    rgba(255, 255, 252, .93);
-  --surface-solid: #fbf6ea;
-  --sunken:        rgba(30, 30, 36, .055);
+  --bg-0:          #c9cac7;                     /* page backdrop */
+  --bg-1:          #d7d8d5;
+  --bg-2:          #e2e3e0;
+  --surface:       rgba(255, 255, 255, .46);    /* glass panel */
+  --surface-hi:    rgba(255, 255, 255, .68);    /* hovered / raised glass */
+  --surface-solid: #e6e7e4;                     /* opaque fallback */
+  --sunken:        rgba(0, 0, 0, .045);         /* inset wells, code, thumbs */
 
   /* --- lines --- */
-  --edge-light:    rgba(255, 255, 255, .8);
-  --border:        rgba(30, 30, 36, .12);
-  --border-strong: rgba(30, 30, 36, .24);
+  --edge-light:    rgba(255, 255, 255, .75);    /* top highlight of a panel */
+  --border:        rgba(28, 30, 27, .10);
+  --border-strong: rgba(28, 30, 27, .20);
 
   /* --- ink --- */
-  --text:          #1e1e24;
-  --text-muted:    #5d5b56;
-  --text-faint:    #635f55;
+  --text:          #1c1e1b;
+  --text-muted:    #6d716c;
+  --text-faint:    #5b5f57;
 
-  /* --- accents --- */
-  --ink:           #1e1e24;                     /* the "dark pill" accent */
-  --ink-text:      #f4e9cd;
-  --accent:        #2a2a32;
-  --accent-soft:   rgba(30, 30, 36, .07);
-  --mint:          #3f6b4c;                     /* success / highlight */
-  --warn:          #8a5a1b;
-  --danger:        #a63b29;
+  /* --- accents ---------------------------------------------------
+     The design stays monochrome: colour appears only as linings —
+     hairlines, rules and small marks — never as a filled surface.
+     --accent is the only one used for text (AA on both surfaces);
+     --accent-2 is line-only, so it can be brighter.
+     Swap these two values to re-tint the whole site.
+     --------------------------------------------------------------- */
+  --ink:           #1f221e;                     /* the "dark pill" accent */
+  --ink-text:      #f2f3f0;
+  --accent:        #3f44c4;
+  --accent-2:      #0a7c93;
+  --accent-soft:   rgba(63, 68, 196, .10);
+  --line-accent:   linear-gradient(90deg, var(--accent), var(--accent-2));
+  --line-accent-v: linear-gradient(180deg, var(--accent), var(--accent-2));
 
-  /* --- shadows: warm, so they sit on cream instead of greying it --- */
+  --mint:          #2fa36b;
+  --warn:          #a06a12;
+  --danger:        #b3382c;
+
+  /* --- shadows: a soft drop plus an inner top highlight --- */
   --shadow-sm:
-      0 1px 1px rgba(255, 255, 255, .6) inset,
-      0 1px 2px rgba(46, 38, 20, .07),
-      0 4px 12px rgba(46, 38, 20, .08);
+      0 1px 1px rgba(255, 255, 255, .55) inset,
+      0 1px 2px rgba(20, 22, 19, .06),
+      0 4px 12px rgba(20, 22, 19, .07);
   --shadow-md:
-      0 1px 1px rgba(255, 255, 255, .7) inset,
-      0 2px 6px rgba(46, 38, 20, .08),
-      0 16px 34px rgba(46, 38, 20, .15);
-  --shadow-inset: inset 0 1px 2px rgba(46, 38, 20, .12);
+      0 1px 1px rgba(255, 255, 255, .65) inset,
+      0 2px 6px rgba(20, 22, 19, .07),
+      0 16px 34px rgba(20, 22, 19, .13);
+  --shadow-inset: inset 0 1px 2px rgba(20, 22, 19, .10);
 
   --radius-lg:  22px;
   --radius:     16px;
@@ -68,37 +69,39 @@
 }
 
 [data-theme="dark"] {
-  --bg-0:          #151519;
-  --bg-1:          #1e1e24;                     /* the original background */
-  --bg-2:          #26262f;                     /* the original raised surface */
-  --surface:       rgba(244, 233, 205, .068);   /* cream at low alpha */
-  --surface-hi:    rgba(244, 233, 205, .12);
-  --surface-solid: #26262f;
+  --bg-0:          #0e1116;
+  --bg-1:          #171b22;
+  --bg-2:          #1e242d;
+  --surface:       rgba(255, 255, 255, .055);
+  --surface-hi:    rgba(255, 255, 255, .095);
+  --surface-solid: #23272e;
   --sunken:        rgba(0, 0, 0, .26);
 
-  --edge-light:    rgba(244, 233, 205, .10);
-  --border:        rgba(244, 233, 205, .13);
-  --border-strong: rgba(244, 233, 205, .27);
+  --edge-light:    rgba(255, 255, 255, .10);
+  --border:        rgba(255, 255, 255, .10);
+  --border-strong: rgba(255, 255, 255, .20);
 
-  --text:          #f4e9cd;                     /* the original text colour */
-  --text-muted:    #b4ac96;
-  --text-faint:    #9e9685;
+  --text:          #e8ebf0;
+  --text-muted:    #98a2b3;
+  --text-faint:    #868f9d;
 
-  --ink:           #f4e9cd;                     /* inverted: the pill goes cream */
-  --ink-text:      #1e1e24;
-  --accent:        #f4e9cd;
-  --accent-soft:   rgba(244, 233, 205, .10);
-  --mint:          #a3c9a8;
+  --ink:           #ecefe8;                     /* inverted: the pill goes light */
+  --ink-text:      #14171a;
+  --accent:        #9aa5ff;
+  --accent-2:      #5fe0f5;
+  --accent-soft:   rgba(154, 165, 255, .14);
+
+  --mint:          #57d39b;
   --warn:          #e0b972;
-  --danger:        #e8907f;
+  --danger:        #ef8577;
 
   --shadow-sm:
-      0 1px 0 rgba(244, 233, 205, .06) inset,
-      0 2px 6px rgba(0, 0, 0, .40);
+      0 1px 0 rgba(255, 255, 255, .05) inset,
+      0 2px 6px rgba(0, 0, 0, .38);
   --shadow-md:
-      0 1px 0 rgba(244, 233, 205, .08) inset,
-      0 18px 40px rgba(0, 0, 0, .55);
-  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, .48);
+      0 1px 0 rgba(255, 255, 255, .07) inset,
+      0 18px 40px rgba(0, 0, 0, .52);
+  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, .45);
 }
 
 * { box-sizing: border-box; }
@@ -148,7 +151,7 @@ a { color: var(--accent); }
 .skip-link:focus { left: 0; }
 
 :focus-visible {
-  outline: 2px solid var(--text);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 6px;
 }
@@ -158,12 +161,19 @@ a { color: var(--accent); }
    ========================================================= */
 
 .site-header {
+  position: relative;
   position: sticky; top: 0; z-index: 20;
   background: color-mix(in srgb, var(--bg-1) 72%, transparent);
   -webkit-backdrop-filter: var(--blur);
   backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 1px 0 var(--edge-light) inset;
+}
+/* hairline of colour along the bottom edge of the header */
+.site-header::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: var(--line-accent);
+  opacity: .5;
 }
 .header-inner {
   display: flex; align-items: center; justify-content: space-between;
@@ -173,7 +183,7 @@ a { color: var(--accent); }
 .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
 .brand-mark {
   width: 36px; height: 36px; border-radius: 12px; flex: none;
-  background: linear-gradient(145deg, #f4e9cd 0%, #d8c9a2 48%, #1e1e24 48.5%, #2a2a32 100%);
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
   box-shadow: var(--shadow-sm);
   position: relative;
 }
@@ -215,6 +225,12 @@ a { color: var(--accent); }
 main { padding-block: 48px 88px; }
 
 .intro { margin-bottom: 34px; }
+.intro::before {
+  content: ""; display: block;
+  width: 46px; height: 3px; margin-bottom: 18px;
+  border-radius: 2px;
+  background: var(--line-accent);
+}
 .intro h1 {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 600; letter-spacing: -.035em; line-height: 1.08;
@@ -246,8 +262,8 @@ main { padding-block: 48px 88px; }
 #search:focus {
   outline: none;
   background: var(--surface-hi);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: var(--shadow-md), 0 0 0 3px var(--accent-soft);
 }
 .clear-btn {
   position: absolute; right: 10px;
@@ -295,7 +311,10 @@ main { padding-block: 48px 88px; }
   box-shadow: var(--shadow-sm);
   transition: all .18s;
 }
-.tag-chip:hover { color: var(--text); background: var(--surface-hi); }
+.tag-chip:hover {
+  color: var(--text); background: var(--surface-hi);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
 .tag-chip[aria-pressed="true"] {
   background: var(--ink); border-color: transparent; color: var(--ink-text);
   box-shadow: var(--shadow-md);
@@ -317,6 +336,7 @@ main { padding-block: 48px 88px; }
 }
 
 .card {
+  position: relative;
   display: flex; flex-direction: column;
   background: var(--surface);
   -webkit-backdrop-filter: var(--blur);
@@ -334,6 +354,15 @@ main { padding-block: 48px 88px; }
   background: var(--surface-hi);
   box-shadow: var(--shadow-md);
 }
+/* the lining: a thin colour bar across the top of every card */
+.card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--line-accent);
+  opacity: .45;
+  transition: opacity .22s ease;
+  z-index: 2;
+}
+.card:hover::before { opacity: 1; }
 
 .card-cover {
   position: relative; aspect-ratio: 16 / 10;
@@ -365,7 +394,7 @@ main { padding-block: 48px 88px; }
 }
 .subject-badge {
   background: var(--accent-soft);
-  color: var(--text-muted);
+  color: var(--accent);
   padding: 4px 11px; border-radius: var(--radius-pill);
   font-weight: 600; letter-spacing: .01em;
 }
@@ -387,7 +416,7 @@ main { padding-block: 48px 88px; }
 }
 
 mark {
-  background: color-mix(in srgb, var(--mint) 32%, transparent);
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
   color: inherit; border-radius: 4px; padding: 0 2px;
 }
 
@@ -427,7 +456,7 @@ mark {
 
 .spinner {
   width: 28px; height: 28px; margin: 0 auto 16px;
-  border: 2.5px solid var(--border-strong); border-top-color: var(--text);
+  border: 2.5px solid var(--border-strong); border-top-color: var(--accent);
   border-radius: 50%; animation: spin .7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -454,6 +483,12 @@ mark {
 .back-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
 .detail-head { max-width: 760px; margin-bottom: 32px; }
+.detail-head::before {
+  content: ""; display: block;
+  width: 46px; height: 3px; margin-bottom: 20px;
+  border-radius: 2px;
+  background: var(--line-accent);
+}
 .detail-head h1 {
   font-size: clamp(1.9rem, 5vw, 2.7rem); font-weight: 600;
   letter-spacing: -.035em; line-height: 1.1; margin: 12px 0 14px;
@@ -492,8 +527,14 @@ mark {
   box-shadow: var(--shadow-sm); margin: 1.4em 0;
 }
 .prose blockquote {
-  padding: 4px 0 4px 20px; border-left: 2px solid var(--border-strong);
+  position: relative;
+  padding: 4px 0 4px 20px;
   color: var(--text-muted); font-style: italic;
+}
+.prose blockquote::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; border-radius: 2px;
+  background: var(--line-accent-v);
 }
 .prose code {
   font-family: var(--mono); font-size: .86em;
@@ -506,7 +547,12 @@ mark {
   overflow-x: auto; margin: 0 0 1.1em;
 }
 .prose pre code { background: none; padding: 0; font-size: .85rem; }
-.prose hr { border: 0; border-top: 1px solid var(--border); margin: 2.2em 0; }
+.prose hr {
+  border: 0; height: 2px; margin: 2.4em 0;
+  border-radius: 2px;
+  background: var(--line-accent);
+  opacity: .5;
+}
 .prose table {
   width: 100%; border-collapse: collapse; margin: 0 0 1.1em; font-size: .93rem;
   display: block; overflow-x: auto;
@@ -514,7 +560,12 @@ mark {
 .prose th, .prose td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; }
 .prose th { background: var(--sunken); font-weight: 600; }
 
-.gallery-wrap { margin-top: 48px; }
+.gallery-wrap { margin-top: 48px; padding-top: 26px; position: relative; }
+.gallery-wrap::before {
+  content: ""; position: absolute; top: 0; left: 0;
+  width: 46px; height: 2px; border-radius: 2px;
+  background: var(--line-accent);
+}
 .gallery-title { font-size: 1.1rem; font-weight: 600; letter-spacing: -.02em; margin: 0 0 16px; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
 .gallery a {
@@ -538,10 +589,16 @@ mark {
    ========================================================= */
 
 .site-footer {
+  position: relative;
   border-top: 1px solid var(--border);
   padding-block: 28px;
   color: var(--text-faint); font-size: .82rem;
   letter-spacing: .01em;
+}
+.site-footer::before {
+  content: ""; position: absolute; top: -1px; left: 0;
+  width: 120px; height: 1px;
+  background: var(--line-accent);
 }
 .site-footer p { margin: 0; }
 
