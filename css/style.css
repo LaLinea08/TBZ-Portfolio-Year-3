@@ -11,13 +11,13 @@
   --bg-0:          #c9cac7;                     /* page backdrop */
   --bg-1:          #d7d8d5;
   --bg-2:          #e2e3e0;
-  --surface:       rgba(255, 255, 255, .46);    /* glass panel */
-  --surface-hi:    rgba(255, 255, 255, .68);    /* hovered / raised glass */
+  --surface:       rgba(255, 255, 255, .64);    /* glass panel */
+  --surface-hi:    rgba(255, 255, 255, .84);    /* hovered / raised glass */
   --surface-solid: #e6e7e4;                     /* opaque fallback */
   --sunken:        rgba(0, 0, 0, .045);         /* inset wells, code, thumbs */
 
   /* --- lines --- */
-  --edge-light:    rgba(255, 255, 255, .75);    /* top highlight of a panel */
+  --edge-light:    rgba(255, 255, 255, .92);    /* top highlight of a panel */
   --border:        rgba(28, 30, 27, .10);
   --border-strong: rgba(28, 30, 27, .20);
 
@@ -71,7 +71,8 @@
   --radius-sm:  12px;
   --radius-pill: 999px;
 
-  --blur: saturate(150%) blur(18px);
+  --blur: saturate(180%) blur(28px);
+  --line-hue-range: 34deg;                      /* how far the linings drift in hue */
   --wrap: 1120px;
 
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -82,12 +83,12 @@
   --bg-0:          #0e1116;
   --bg-1:          #171b22;
   --bg-2:          #1e242d;
-  --surface:       rgba(255, 255, 255, .055);
-  --surface-hi:    rgba(255, 255, 255, .095);
+  --surface:       rgba(255, 255, 255, .09);
+  --surface-hi:    rgba(255, 255, 255, .14);
   --surface-solid: #23272e;
   --sunken:        rgba(0, 0, 0, .26);
 
-  --edge-light:    rgba(255, 255, 255, .10);
+  --edge-light:    rgba(255, 255, 255, .16);
   --border:        rgba(255, 255, 255, .10);
   --border-strong: rgba(255, 255, 255, .20);
 
@@ -639,9 +640,15 @@ mark {
 
 /* =========================================================
    Animated linings
-   The gradient is drawn three times wider than its element and slid
-   sideways, so the colour appears to flow along each line. Because the
-   gradient's first and last stop are the same, the loop is seamless.
+   Two things move at once:
+   1. line-flow slides the gradient sideways. It is drawn three times
+      wider than its element and shifted by exactly one tile, and since
+      its first and last stop are the same colour the loop is seamless.
+   2. line-hue rotates the actual colours through a band either side of
+      the base palette, so the line changes colour rather than only
+      appearing to travel. Widen --line-hue-range for a bigger sweep
+      (180deg goes right around the wheel).
+   filter is GPU-composited, so the hue cycle costs almost nothing.
    ========================================================= */
 
 /* The gradient is 3x the element, so a 150% position shift moves it by
@@ -655,6 +662,12 @@ mark {
   to   { background-position: 50% 150%; }
 }
 
+/* the colour cycle itself */
+@keyframes line-hue {
+  0%, 100% { filter: hue-rotate(calc(-1 * var(--line-hue-range))); }
+  50%      { filter: hue-rotate(var(--line-hue-range)); }
+}
+
 .site-header::after,
 .intro::before,
 .detail-head::before,
@@ -663,20 +676,23 @@ mark {
 .card::before,
 .prose hr {
   background-size: 300% 100%;
-  animation: line-flow var(--line-flow) linear infinite;
+  animation: line-flow var(--line-flow) linear infinite,
+             line-hue  calc(var(--line-flow) * 0.5) ease-in-out infinite;
 }
 
 /* the vertical rail beside a quote flows downwards instead */
 .prose blockquote::before {
   background-size: 100% 300%;
-  animation: line-flow-v var(--line-flow) linear infinite;
+  animation: line-flow-v var(--line-flow) linear infinite,
+             line-hue    calc(var(--line-flow) * 0.5) ease-in-out infinite;
 }
 
-/* hovering a card speeds its lining up as well as brightening it */
-.card:hover::before { animation-duration: 4s; }
+/* hovering a card speeds both its flow and its colour cycle up */
+.card:hover::before { animation-duration: 4s, 2s; }
 
 /* the brand mark drifts through the same colours */
 .brand-mark {
   background-size: 300% 300%;
-  animation: line-flow calc(var(--line-flow) * 1.5) linear infinite;
+  animation: line-flow calc(var(--line-flow) * 1.5) linear infinite,
+             line-hue  calc(var(--line-flow) * 0.5) ease-in-out infinite;
 }

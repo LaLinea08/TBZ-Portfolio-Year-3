@@ -423,6 +423,10 @@ kbd {
 .panel::before,
 .deploy-bar::before {
   background-size: 300% 100%;
-  animation: line-flow var(--line-flow) linear infinite;
+  animation: line-flow var(--line-flow) linear infinite,
+             line-hue  calc(var(--line-flow) * 0.5) ease-in-out infinite;
 }
-.md-preview-label { animation: line-flow var(--line-flow) linear infinite; }
+.md-preview-label {
+  animation: line-flow var(--line-flow) linear infinite,
+             line-hue  calc(var(--line-flow) * 0.5) ease-in-out infinite;
+}
