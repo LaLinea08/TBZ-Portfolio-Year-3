@@ -81,11 +81,21 @@ A **fine-grained** token scoped to a single repository is exactly that.
    | **Resource owner** | Your own account |
    | **Repository access** | **Only select repositories** → pick **this repository only** |
 
-6. Open **Permissions → Repository permissions** and find **Contents**.
-   Set it to **Read and write**.
+6. Open **Permissions → Repository permissions** and set:
 
-   This is the only permission you need. Leave everything else on *No access*.
-   (GitHub adds a read-only **Metadata** permission automatically — that is expected.)
+   | Permission | Level | Why |
+   | --- | --- | --- |
+   | **Contents** | Read and write | Required — this is what commits your entries and images |
+   | **Actions** | Read and write | Optional — lets the **Re-run deployment** button work |
+
+   Leave everything else on *No access*. (GitHub adds a read-only **Metadata**
+   permission automatically — that is expected.)
+
+   Without the *Actions* permission everything still works; only the re-run
+   button is unavailable, and the admin page tells you so and points you at the
+   Actions tab instead. If your site publishes from a branch rather than a
+   workflow, **Pages: Read and write** works for the re-run button too — the
+   admin page tries both.
 
 7. Click **Generate token** and **copy it now** — GitHub shows it only once.
 8. Open `admin.html`, paste the token, and click **Verify token & sign in**.
@@ -134,20 +144,59 @@ it useless, everywhere, and the public site keeps working untouched.
 1. Open `admin.html` and sign in.
 2. Fill in title, date (defaults to today), subject, tags, a short summary
    and the body in Markdown — the preview next to the editor updates as you type.
-3. Drag images onto the drop area (or click it to pick files). Click an image to make
-   it the **cover image**; the first one is used by default.
-4. Click **Save entry**.
+3. Add images in whichever way is easiest:
+   * **drag** them onto the drop area,
+   * **click** the drop area to pick files, or
+   * **paste** a screenshot with <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>V</kbd>.
+4. Each thumbnail has three buttons:
+   * **Cover** — use it as the image shown in the overview (the first image is the cover by default)
+   * **Insert** — drop `![](images/<slug>/<file>)` into the text at your cursor
+   * **Remove** — take it back out
+5. Click **Save entry**.
 
-What happens when you save:
+**You never have to prepare the files first.** Anything the browser can decode is
+resized to at most 1600 px on its longest edge and re-encoded before upload, so a
+6 MB phone photo becomes roughly 400 KB on its own. PNGs stay PNGs (transparency
+survives); SVG and GIF are passed through untouched so vectors and animations are
+not destroyed. The thumbnail shows the final size.
 
-1. Each new image is uploaded to `images/<slug>/<filename>`.
-2. `data/entries.json` is fetched to read its current content and `sha`.
-3. The new entry object is appended and the file is committed back with that `sha`
-   and a message like `Add entry: <title>`.
+What happens when you save — **one commit, not one per file**:
 
-The status messages in the bottom-right corner show each step. When it is done, it
-reminds you that **GitHub Pages needs about a minute to redeploy** before the change
-shows up on the public site — the commit is instant, publishing is not.
+1. Each new image is uploaded as a blob (`POST /git/blobs`) — nothing is visible
+   in the repository yet.
+2. `data/entries.json` is read so the new entry is added to the *current* content.
+3. A tree, then a commit, containing every image **and** `entries.json` together.
+4. The branch is moved to that commit with a non-forced update, so if someone
+   else committed in the meantime GitHub rejects it and the admin page re-reads
+   and retries once — without re-uploading the images.
+
+That means one save produces exactly one GitHub Pages deployment, and an entry is
+never half-published. The status messages in the bottom-right corner show each
+step, and afterwards the page **polls your live site** and tells you the moment the
+entry is actually visible (usually about a minute).
+
+### The deployment bar
+
+Across the top of the admin page is a status bar comparing your **live site** with
+the **repository**:
+
+* 🟢 *Live site is up to date* — everything you have saved is published.
+* 🟠 *… not published yet* — the commit landed but GitHub Pages has not published it.
+* **Check now** — re-reads the live `data/entries.json` and refreshes the comparison.
+* **Re-run deployment** — asks GitHub to build and deploy again.
+
+Use **Re-run deployment** when a Pages build fails. That happens occasionally for
+reasons that have nothing to do with your content — GitHub's deployment API
+returns a `500` and the build is marked failed:
+
+```
+Error: Failed to create deployment (status: 500) with build version <sha>.
+Server error, is githubstatus.com reporting a Pages outage?
+```
+
+Your commit is fine in that case; only the publishing step failed. Re-running
+redeploys the same commit. If it keeps failing, check
+[githubstatus.com](https://www.githubstatus.com/) for a Pages incident.
 
 ### Editing and deleting
 
@@ -159,10 +208,11 @@ An entry's slug never changes when you edit it, so image paths stay valid.
 
 ### If two people save at once
 
-If the file changed between the read and the write, GitHub rejects the commit with a
-`409` sha conflict. The admin page catches that, re-reads `data/entries.json` and
-retries once with the fresh `sha`, so your change is applied on top of the newer version
-instead of overwriting it.
+The branch is updated with `force: false`, so if the branch moved between the read
+and the write, GitHub rejects it (`422` / `409`) instead of overwriting the other
+change. The admin page catches that, re-reads the head commit and
+`data/entries.json`, rebuilds the commit on top of the newer version and retries —
+once. Already-uploaded image blobs are reused, so the retry costs nothing extra.
 
 ---
 
@@ -212,6 +262,14 @@ added your own.
   `btoa()` throws on anything outside Latin-1, so umlauts and emoji would break a
   commit. `admin.js` encodes through `TextEncoder` and base64s the resulting *bytes*
   instead of the characters, and decodes back through `TextDecoder`.
+* **One atomic commit per save.** Writes go through the Git Data API
+  (blobs → tree → commit → ref) rather than one Contents API `PUT` per file.
+  Reads still use the Contents API. This keeps a multi-image entry to a single
+  commit and a single deployment, and makes a half-saved entry impossible.
+* **Client-side image processing.** Resizing and re-encoding happen on a
+  `<canvas>` in the browser, so nothing large is ever uploaded. HEIC files
+  (the iPhone default) cannot be decoded outside Safari; the admin page detects
+  that and says so instead of committing a file that will not display.
 * **No build step.** `marked` and `DOMPurify` are loaded from a CDN at pinned versions.
   If the CDN is unreachable, the detail view falls back to showing the raw Markdown
   rather than an empty page.

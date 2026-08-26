@@ -26,6 +26,7 @@
     </div>
 
     <div class="header-actions">
+      <a id="view-site" class="btn btn-ghost" href="#" target="_blank" rel="noopener" hidden>View site</a>
       <span id="user-badge" class="user-badge" hidden></span>
       <button id="theme-toggle" class="icon-btn" type="button" aria-label="Switch colour scheme">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
@@ -93,6 +94,16 @@
   <!-- ================= APP ================= -->
   <section id="app-view" hidden>
 
+    <!-- ---------- deployment status ---------- -->
+    <div id="deploy-bar" class="deploy-bar is-unknown">
+      <span class="deploy-dot" aria-hidden="true"></span>
+      <span id="deploy-text" class="deploy-text">Checking the live site …</span>
+      <div class="deploy-actions">
+        <button id="check-btn" class="btn btn-ghost" type="button">Check now</button>
+        <button id="rerun-btn" class="btn btn-ghost" type="button">Re-run deployment</button>
+      </div>
+    </div>
+
     <nav class="tabs" role="tablist">
       <button class="tab" id="tab-editor" role="tab" aria-selected="true" aria-controls="pane-editor">Entry</button>
       <button class="tab" id="tab-list"   role="tab" aria-selected="false" aria-controls="pane-list">All entries</button>
@@ -152,17 +163,22 @@
         <div class="field">
           <label>Images</label>
           <div id="dropzone" class="dropzone" tabindex="0" role="button"
-               aria-label="Drag images here or click to choose files">
+               aria-label="Drag images here, click to choose files, or paste a screenshot">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 16V4M12 4L8 8M12 4l4 4" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M3 15v3a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-3" stroke-linecap="round"/>
             </svg>
-            <p><strong>Drag images here</strong> or click to choose files</p>
-            <p class="hint">PNG, JPG, WEBP, GIF, SVG · max. approx. 5 MB per image</p>
+            <p><strong>Drag images here</strong>, click to choose files,
+               or press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste a screenshot</p>
+            <p class="hint">Large photos are resized and compressed automatically — drop them as they are</p>
           </div>
           <input id="file-input" type="file" accept="image/*" multiple hidden>
           <div id="image-list" class="image-list"></div>
-          <p class="hint">Click an image to make it the <strong>cover image</strong>.</p>
+          <p id="image-hint" class="hint" hidden>
+            <strong>Cover</strong> sets the image shown in the overview ·
+            <strong>Insert</strong> places it in the text at your cursor ·
+            everything is uploaded in one commit when you save.
+          </p>
         </div>
 
         <div class="form-actions">
