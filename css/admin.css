@@ -37,9 +37,9 @@
 }
 /* matching accent lining across the top of every panel */
 .panel::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: var(--line-accent);
-  opacity: .6;
+  opacity: .85;
 }
 
 .login-panel { max-width: 640px; margin: 40px auto; }
@@ -168,7 +168,7 @@
 }
 .md-preview-label {
   position: absolute; top: 0; left: 0;
-  border-top: 2px solid transparent;
+  border-top: 3px solid transparent;
   border-image: var(--line-accent) 1;
   font-size: .66rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-faint);
@@ -279,9 +279,9 @@ kbd {
   box-shadow: var(--shadow-sm);
 }
 .deploy-bar::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: var(--line-accent);
-  opacity: .6;
+  opacity: .85;
 }
 .deploy-dot {
   width: 9px; height: 9px; border-radius: 50%; flex: none;
