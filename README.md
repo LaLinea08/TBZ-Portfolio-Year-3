@@ -29,7 +29,8 @@ is exactly what the admin page does for you.
 │   ├── app.js            Public site logic (loading, search, filters, routing)
 │   └── admin.js          Admin logic (GitHub API, uploads, commits)
 ├── data/
-│   └── entries.json      Every entry lives here
+│   ├── entries.json      Every entry lives here
+│   └── tags.json         Tag -> colour, optional
 └── images/
     └── <slug>/           Uploaded images, one folder per entry
 ```
@@ -175,6 +176,28 @@ never half-published. The status messages in the bottom-right corner show each
 step, and afterwards the page **polls your live site** and tells you the moment the
 entry is actually visible (usually about a minute).
 
+### Tag colours
+
+The **Tag colours** tab lists every tag used across your entries. Pick one of the
+nine colours for a tag — or the crossed-out swatch for none — and press
+**Save colours**. The colour belongs to the *tag*, not to one entry, so it looks the
+same everywhere that tag appears: the filter chips, the cards, and the entry pages.
+
+The mapping is committed to `data/tags.json`, on its own, in a single commit:
+
+```json
+{ "setup": "blue", "guide": "green", "test": "amber" }
+```
+
+Available colours: `red`, `orange`, `amber`, `green`, `teal`, `blue`, `indigo`,
+`purple`, `pink`. Each was picked so the label still passes WCAG AA in both light
+and dark mode against the tinted pill it sits on — so you cannot make a tag
+unreadable by choosing the "wrong" colour.
+
+`data/tags.json` is entirely optional. If it is missing or malformed, the site
+simply shows every tag in the neutral style and carries on; nothing else breaks.
+Tags that no longer appear on any entry are dropped from the file when you save.
+
 ### The deployment bar
 
 Across the top of the admin page is a status bar comparing your **live site** with
@@ -250,6 +273,9 @@ Each object in `data/entries.json`:
 
 The file ships with two example entries. Delete them in the admin area once you have
 added your own.
+
+Tag colours live separately, in `data/tags.json`, as a flat map of tag name to
+colour name — see **Tag colours** above.
 
 ---
 

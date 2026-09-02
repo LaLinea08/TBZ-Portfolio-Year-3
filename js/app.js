@@ -7,11 +7,13 @@
   'use strict';
 
   var ENTRIES_URL = 'data/entries.json';
+  var TAGS_URL = 'data/tags.json';
   var THEME_KEY = 'portfolio-theme';
   var LOCALE = 'en-GB';   // dates follow the page language, not the visitor's browser
 
   var state = {
     entries: [],      // all entries, newest first
+    tagColors: {},    // { tag: colour name }, from data/tags.json
     query: '',        // live search text
     subject: '',      // selected subject ('' = all)
     tag: ''           // selected tag ('' = all)
@@ -87,6 +89,14 @@
 
   function show(node, visible) {
     if (node) node.hidden = !visible;
+  }
+
+  // Give an element its tag's colour. Tags without one simply stay neutral,
+  // which is also what happens if data/tags.json is missing entirely.
+  function paintTag(node, tag) {
+    var colour = state.tagColors[tag];
+    if (colour) node.setAttribute('data-tag-color', colour);
+    return node;
   }
 
   /* ---------------------------------------------------------
@@ -205,6 +215,16 @@
     show(el.stateNomatch, false);
     showSkeletons(6);
 
+    // Tag colours are optional: a missing or broken file just means no
+    // colours, so it must never block the entries from rendering.
+    fetch(TAGS_URL + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) { return res.ok ? res.json() : {}; })
+      .then(function (map) {
+        state.tagColors = (map && typeof map === 'object' && !Array.isArray(map)) ? map : {};
+      })
+      .catch(function () { state.tagColors = {}; })
+      .then(function () { buildFilters(); render(); });
+
     // GitHub Pages caches aggressively — bust it on every load.
     return fetch(ENTRIES_URL + '?t=' + Date.now(), { cache: 'no-store' })
       .then(function (res) {
@@ -288,6 +308,7 @@
       btn.className = 'tag-chip';
       btn.textContent = '#' + t;
       btn.setAttribute('aria-pressed', state.tag === t ? 'true' : 'false');
+      paintTag(btn, t);
       btn.addEventListener('click', function () {
         state.tag = (state.tag === t) ? '' : t;   // click again to unset
         buildFilters();
@@ -422,7 +443,7 @@
         var pill = document.createElement('span');
         pill.className = 'tag-pill';
         pill.textContent = '#' + t;
-        tagList.appendChild(pill);
+        tagList.appendChild(paintTag(pill, t));
       });
       body.appendChild(tagList);
     }
@@ -489,7 +510,7 @@
       var pill = document.createElement('span');
       pill.className = 'tag-pill';
       pill.textContent = '#' + t;
-      el.detailTags.appendChild(pill);
+      el.detailTags.appendChild(paintTag(pill, t));
     });
 
     if (entry.coverImage) {

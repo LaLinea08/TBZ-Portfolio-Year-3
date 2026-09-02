@@ -55,6 +55,19 @@
   --warn:          #a06a12;
   --danger:        #b3382c;
 
+  /* Tag label colours. Each was solved so the label still reads at AA on a
+     pill tinted 10% with its own colour, over the sheerest panel above the
+     darkest ground. Never use these for anything larger than a label. */
+  --tag-red:    #ab1c24;
+  --tag-orange: #92400c;
+  --tag-amber:  #715109;
+  --tag-green:  #176323;
+  --tag-teal:   #0e6062;
+  --tag-blue:   #1c50c4;
+  --tag-indigo: #372cba;
+  --tag-purple: #8329ae;
+  --tag-pink:   #a31f5e;
+
   /* --- shadows: a soft drop plus an inner top highlight --- */
   --shadow-sm:
       0 1px 1px rgba(255, 255, 255, .55) inset,
@@ -125,6 +138,16 @@
   --mint:          #57d39b;
   --warn:          #e0b972;
   --danger:        #ef8577;
+
+  --tag-red:    #ef9fa3;
+  --tag-orange: #f3a16d;
+  --tag-amber:  #eeb12b;
+  --tag-green:  #45d35c;
+  --tag-teal:   #36dde2;
+  --tag-blue:   #9db7f1;
+  --tag-indigo: #b5b1ed;
+  --tag-purple: #d3a4ea;
+  --tag-pink:   #eda1c5;
 
   --shadow-sm:
       0 1px 0 rgba(255, 255, 255, .05) inset,
@@ -875,3 +898,42 @@ mark {
 @media (max-width: 560px) {
   .bg-aurora span { width: 100vmax; height: 100vmax; opacity: calc(var(--aurora-opacity) * .8); }
 }
+
+
+/* =========================================================
+   Tag colour labels
+   A tag's colour is stored once in data/tags.json and applied wherever
+   that tag appears. One rule per colour resolves --tag-c; everything
+   else reads from it, so adding a colour means adding one line.
+   ========================================================= */
+
+[data-tag-color="red"]    { --tag-c: var(--tag-red); }
+[data-tag-color="orange"] { --tag-c: var(--tag-orange); }
+[data-tag-color="amber"]  { --tag-c: var(--tag-amber); }
+[data-tag-color="green"]  { --tag-c: var(--tag-green); }
+[data-tag-color="teal"]   { --tag-c: var(--tag-teal); }
+[data-tag-color="blue"]   { --tag-c: var(--tag-blue); }
+[data-tag-color="indigo"] { --tag-c: var(--tag-indigo); }
+[data-tag-color="purple"] { --tag-c: var(--tag-purple); }
+[data-tag-color="pink"]   { --tag-c: var(--tag-pink); }
+
+/* the pill shown on a card and on an entry page */
+.tag-pill[data-tag-color] {
+  color: var(--tag-c);
+  background: color-mix(in srgb, var(--tag-c) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-c) 28%, transparent);
+}
+
+/* the filter chip carries a small dot rather than a full tint, so the
+   chips keep their shared shape and the colour still reads */
+.tag-chip[data-tag-color]::before {
+  content: "";
+  display: inline-block; vertical-align: middle;
+  width: 8px; height: 8px; margin-right: 7px;
+  border-radius: 50%;
+  background: var(--tag-c);
+  transition: background .18s;
+}
+.tag-chip[data-tag-color]:hover { border-color: color-mix(in srgb, var(--tag-c) 55%, var(--border)); }
+/* on the selected (ink) chip the dot flips to the pill's own text colour */
+.tag-chip[data-tag-color][aria-pressed="true"]::before { background: var(--ink-text); }

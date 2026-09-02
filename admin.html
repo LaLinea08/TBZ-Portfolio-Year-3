@@ -110,6 +110,7 @@
     <nav class="tabs" role="tablist">
       <button class="tab" id="tab-editor" role="tab" aria-selected="true" aria-controls="pane-editor">Entry</button>
       <button class="tab" id="tab-list"   role="tab" aria-selected="false" aria-controls="pane-list">All entries</button>
+      <button class="tab" id="tab-tags"   role="tab" aria-selected="false" aria-controls="pane-tags">Tag colours</button>
     </nav>
 
     <!-- ---------- editor ---------- -->
@@ -143,6 +144,7 @@
         <div class="field">
           <label for="f-tags">Tags <span class="muted">(comma separated)</span></label>
           <input id="f-tags" type="text" placeholder="html, css, group work">
+          <div id="tag-preview" class="tag-preview"></div>
         </div>
 
         <div class="field">
@@ -198,6 +200,19 @@
         <button id="reload-btn" class="btn btn-ghost" type="button">Reload</button>
       </div>
       <div id="admin-list" class="admin-list"></div>
+    </div>
+
+    <!-- ---------- tag colours ---------- -->
+    <div id="pane-tags" role="tabpanel" aria-labelledby="tab-tags" hidden>
+      <div class="editor-head">
+        <h1>Tag colours</h1>
+        <button id="save-tags" class="btn" type="button" disabled>Save colours</button>
+      </div>
+      <p class="hint" style="margin-bottom:18px">
+        A colour belongs to the tag itself, so it appears the same on every entry.
+        Choose one per tag, then save — it is committed to <code>data/tags.json</code>.
+      </p>
+      <div id="tag-editor" class="tag-editor"></div>
     </div>
 
   </section>

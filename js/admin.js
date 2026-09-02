@@ -28,6 +28,8 @@
 
   var API = 'https://api.github.com';
   var ENTRIES_PATH = 'data/entries.json';
+  var TAGS_PATH = 'data/tags.json';
+  var TAG_COLOURS = ['red','orange','amber','green','teal','blue','indigo','purple','pink'];
   var IMAGES_DIR = 'images';
 
   // localStorage keys. The token key is deliberately obvious — the user should
@@ -55,6 +57,8 @@
     repo: { owner: '', repo: '', branch: '' },
     pagesUrl: null,      // public site URL, when the token may read Pages settings
     entries: [],         // parsed content of data/entries.json
+    tagColors: {},       // { tag: colour } from data/tags.json
+    tagsDirty: false,    // unsaved colour changes
     images: [],          // image items attached to the entry being edited
     coverId: null,       // id of the image item marked as cover
     editingId: null,     // id of the entry being edited, or null for "new"
@@ -343,23 +347,31 @@
    * The blobs are created once by the caller; only the tree/commit/ref part is
    * retried, so a conflict never re-uploads the images.
    */
-  function commitAll(blobs, build, deletes, message) {
+  function commitAll(blobs, build, deletes, message, texts) {
     var attempt = 0;
 
     function tryOnce() {
       attempt++;
-      return Promise.all([getHead(), loadEntriesFile()]).then(function (results) {
+      // Only read entries.json when we are actually rewriting it.
+      var reads = [getHead(), build ? loadEntriesFile() : Promise.resolve(null)];
+      return Promise.all(reads).then(function (results) {
         var head = results[0];
-        var entries = results[1].entries;
-
-        var nextEntries = sortEntries(build(JSON.parse(JSON.stringify(entries))));
-        var json = JSON.stringify(nextEntries, null, 2) + '\n';
 
         var tree = blobs.map(function (b) {
           return { path: b.path, mode: '100644', type: 'blob', sha: b.sha };
         });
-        // entries.json goes in as text — the API creates the blob for us.
-        tree.push({ path: ENTRIES_PATH, mode: '100644', type: 'blob', content: json });
+
+        var nextEntries = null;
+        if (build) {
+          nextEntries = sortEntries(build(JSON.parse(JSON.stringify(results[1].entries))));
+          // entries.json goes in as text — the API creates the blob for us.
+          tree.push({ path: ENTRIES_PATH, mode: '100644', type: 'blob',
+                      content: JSON.stringify(nextEntries, null, 2) + '\n' });
+        }
+        // any other plain-text file riding along in the same commit
+        (texts || []).forEach(function (f) {
+          tree.push({ path: f.path, mode: '100644', type: 'blob', content: f.content });
+        });
         // A null sha on an existing path deletes it from the new tree.
         (deletes || []).forEach(function (p) {
           tree.push({ path: p, mode: '100644', type: 'blob', sha: null });
@@ -379,7 +391,7 @@
             method: 'PATCH',
             body: { sha: commit.sha, force: false }
           }).then(function () {
-            state.entries = nextEntries;
+            if (nextEntries) state.entries = nextEntries;
             return { entries: nextEntries, commit: commit.sha };
           });
         });
@@ -409,6 +421,22 @@
       }
       state.entries = list;
       return { entries: list, sha: file.sha };
+    });
+  }
+
+  function loadTagsFile() {
+    return getFile(TAGS_PATH, true).then(function (file) {
+      var map = {};
+      if (file.content && file.content.trim()) {
+        var parsed = JSON.parse(file.content);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) map = parsed;
+      }
+      state.tagColors = map;
+      return map;
+    }).catch(function (err) {
+      // The file is optional — a repo without it simply has no tag colours.
+      if (err.status === 404) { state.tagColors = {}; return {}; }
+      throw err;
     });
   }
 
@@ -636,9 +664,11 @@
       saveRepo();
       showApp(user);
       return loadEntriesFile()
+        .then(function () { return loadTagsFile(); })
         .then(function () {
           renderEntryList();
           refreshSubjectSuggestions();
+          renderTagPreview();
           refreshDeployStatus(true);
         })
         .catch(function (err) {
@@ -936,6 +966,133 @@
   }
 
   /* =======================================================================
+     Tag colours
+     ======================================================================= */
+
+  // Every tag in use, plus any that already carry a colour.
+  function allTags() {
+    var counts = {};
+    state.entries.forEach(function (e) {
+      (e.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; });
+    });
+    Object.keys(state.tagColors).forEach(function (t) {
+      if (!(t in counts)) counts[t] = 0;
+    });
+    return Object.keys(counts).sort(function (a, b) {
+      return a.localeCompare(b);
+    }).map(function (t) { return { tag: t, count: counts[t] }; });
+  }
+
+  function makePill(tag) {
+    var pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.textContent = '#' + tag;
+    if (state.tagColors[tag]) pill.setAttribute('data-tag-color', state.tagColors[tag]);
+    return pill;
+  }
+
+  function renderTagEditor() {
+    var tags = allTags();
+    el.tagEditor.innerHTML = '';
+
+    if (!tags.length) {
+      el.tagEditor.innerHTML =
+        '<div class="state"><div class="state-icon">🏷️</div><h2>No tags yet</h2>' +
+        '<p>Add tags to an entry and they will show up here.</p></div>';
+      return;
+    }
+
+    tags.forEach(function (item) {
+      var row = document.createElement('div');
+      row.className = 'tag-row';
+
+      var name = document.createElement('div');
+      name.className = 'tag-name';
+      name.appendChild(makePill(item.tag));
+      row.appendChild(name);
+
+      var count = document.createElement('span');
+      count.className = 'tag-count';
+      count.textContent = item.count === 1 ? '1 entry' : item.count + ' entries';
+      row.appendChild(count);
+
+      var swatches = document.createElement('div');
+      swatches.className = 'swatches';
+
+      // "no colour" first, then one swatch per colour
+      [''].concat(TAG_COLOURS).forEach(function (colour) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch' + (colour ? '' : ' is-none');
+        if (colour) btn.setAttribute('data-tag-color', colour);
+        btn.setAttribute('aria-pressed', String((state.tagColors[item.tag] || '') === colour));
+        btn.setAttribute('aria-label', colour
+          ? 'Colour ' + item.tag + ' ' + colour
+          : 'Remove the colour from ' + item.tag);
+        btn.title = colour || 'No colour';
+        btn.addEventListener('click', function () {
+          if (colour) state.tagColors[item.tag] = colour;
+          else delete state.tagColors[item.tag];
+          state.tagsDirty = true;
+          el.saveTags.disabled = false;
+          renderTagEditor();
+          renderTagPreview();
+        });
+        swatches.appendChild(btn);
+      });
+
+      row.appendChild(swatches);
+      el.tagEditor.appendChild(row);
+    });
+  }
+
+  function saveTagColors() {
+    var status = logStatus('Saving tag colours …', 'work');
+    el.saveTags.disabled = true;
+
+    // Drop tags that no longer exist anywhere, so the file stays tidy.
+    var live = {};
+    state.entries.forEach(function (e) {
+      (e.tags || []).forEach(function (t) { live[t] = true; });
+    });
+    var clean = {};
+    Object.keys(state.tagColors).sort().forEach(function (t) {
+      if (live[t]) clean[t] = state.tagColors[t];
+    });
+    state.tagColors = clean;
+
+    commitAll([], null, [], 'Update tag colours', [
+      { path: TAGS_PATH, content: JSON.stringify(clean, null, 2) + '\n' }
+    ])
+      .then(function () {
+        state.tagsDirty = false;
+        status.update('Tag colours saved.', 'ok');
+        setDeployState('building', 'Waiting for GitHub Pages to publish …');
+        setTimeout(function () { refreshDeployStatus(true); }, 45000);
+        renderTagEditor();
+      })
+      .catch(function (err) {
+        el.saveTags.disabled = false;
+        status.update('Saving tag colours failed: ' + err.message, 'error');
+        if (err.status === 401) logout();
+      });
+  }
+
+  // Live chips under the tags field, in their assigned colours.
+  function renderTagPreview() {
+    el.tagPreview.innerHTML = '';
+    parseTags(el.fTags.value).forEach(function (t) {
+      var pill = makePill(t);
+      pill.title = 'Change this tag\u2019s colour';
+      pill.addEventListener('click', function () {
+        switchTab('tags');
+        window.scrollTo(0, 0);
+      });
+      el.tagPreview.appendChild(pill);
+    });
+  }
+
+  /* =======================================================================
      Form <-> entry object
      ======================================================================= */
 
@@ -956,6 +1113,7 @@
     el.slugPreview.textContent = '–';
     renderImageList();
     updatePreview();
+    renderTagPreview();
   }
 
   function fillForm(entry) {
@@ -988,6 +1146,7 @@
 
     el.editorTitle.textContent = 'Edit entry';
     show(el.cancelEdit, true);
+    renderTagPreview();
     renderImageList();
     updatePreview();
     switchTab('editor');
@@ -1211,10 +1370,13 @@
   function reloadEntries() {
     var status = logStatus('Reloading entries …', 'work');
     loadEntriesFile()
+      .then(function () { return loadTagsFile(); })
       .then(function () {
         status.update(state.entries.length + ' entry/entries loaded.', 'ok');
         refreshSubjectSuggestions();
         renderEntryList();
+        renderTagPreview();
+        if (!el.paneTags.hidden) renderTagEditor();
         refreshDeployStatus(true);
       })
       .catch(function (err) {
@@ -1233,11 +1395,15 @@
      ======================================================================= */
 
   function switchTab(which) {
-    var isEditor = which === 'editor';
-    el.tabEditor.setAttribute('aria-selected', String(isEditor));
-    el.tabList.setAttribute('aria-selected', String(!isEditor));
-    show(el.paneEditor, isEditor);
-    show(el.paneList, !isEditor);
+    var panes = { editor: [el.tabEditor, el.paneEditor],
+                  list:   [el.tabList,   el.paneList],
+                  tags:   [el.tabTags,   el.paneTags] };
+    Object.keys(panes).forEach(function (key) {
+      var active = key === which;
+      panes[key][0].setAttribute('aria-selected', String(active));
+      show(panes[key][1], active);
+    });
+    if (which === 'tags') renderTagEditor();
   }
 
   function initTheme() {
@@ -1258,8 +1424,9 @@
       deployBar: $('deploy-bar'), deployText: $('deploy-text'),
       checkBtn: $('check-btn'), rerunBtn: $('rerun-btn'),
 
-      tabEditor: $('tab-editor'), tabList: $('tab-list'),
-      paneEditor: $('pane-editor'), paneList: $('pane-list'),
+      tabEditor: $('tab-editor'), tabList: $('tab-list'), tabTags: $('tab-tags'),
+      paneEditor: $('pane-editor'), paneList: $('pane-list'), paneTags: $('pane-tags'),
+      tagEditor: $('tag-editor'), saveTags: $('save-tags'), tagPreview: $('tag-preview'),
 
       entryForm: $('entry-form'), entryId: $('entry-id'),
       editorTitle: $('editor-title'), cancelEdit: $('cancel-edit'),
@@ -1332,6 +1499,9 @@
     // --- tabs --------------------------------------------------------------
     el.tabEditor.addEventListener('click', function () { switchTab('editor'); });
     el.tabList.addEventListener('click', function () { switchTab('list'); });
+    el.tabTags.addEventListener('click', function () { switchTab('tags'); });
+    el.saveTags.addEventListener('click', saveTagColors);
+    el.fTags.addEventListener('input', renderTagPreview);
 
     // --- editor ------------------------------------------------------------
     el.fBody.addEventListener('input', updatePreview);
@@ -1407,7 +1577,8 @@
 
     // --- warn before losing unsaved work -----------------------------------
     window.addEventListener('beforeunload', function (ev) {
-      var dirty = el.fTitle && (el.fTitle.value.trim() || el.fBody.value.trim() || state.images.length);
+      var dirty = state.tagsDirty ||
+                  (el.fTitle && (el.fTitle.value.trim() || el.fBody.value.trim() || state.images.length));
       if (state.token && dirty) { ev.preventDefault(); ev.returnValue = ''; }
     });
 
