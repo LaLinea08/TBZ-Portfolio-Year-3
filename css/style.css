@@ -49,7 +49,7 @@
   --line-accent-v: linear-gradient(180deg,
                      var(--line-1), var(--line-2), var(--line-3),
                      var(--line-2), var(--line-1));
-  --line-flow:     16s;
+  --line-flow:     10s;
 
   --mint:          #2fa36b;
   --warn:          #a06a12;
@@ -82,6 +82,7 @@
   --blob-2: #d2eef5;
   --blob-3: #ebdbfa;
   --aurora-opacity: .75;
+  --aurora-speed: 28s;           /* base drift; the three blobs scale off this */
   --line-hue-range: 34deg;                      /* how far the linings drift in hue */
   --wrap: 1120px;
 
@@ -713,7 +714,7 @@ mark {
 }
 
 /* hovering a card speeds both its flow and its colour cycle up */
-.card:hover::before { animation-duration: 4s, 2s; }
+.card:hover::before { animation-duration: 2.5s, 1.25s; }
 
 /* the brand mark drifts through the same colours */
 .brand-mark {
@@ -844,17 +845,17 @@ mark {
 .bg-aurora span:nth-child(1) {
   top: -12%; left: -8%;
   background: radial-gradient(circle at center, var(--blob-1) 0%, transparent 66%);
-  animation: drift-1 44s ease-in-out infinite alternate;
+  animation: drift-1 var(--aurora-speed) ease-in-out infinite alternate;
 }
 .bg-aurora span:nth-child(2) {
   top: 18%; right: -14%; left: auto;
   background: radial-gradient(circle at center, var(--blob-2) 0%, transparent 66%);
-  animation: drift-2 56s ease-in-out infinite alternate;
+  animation: drift-2 calc(var(--aurora-speed) * 1.27) ease-in-out infinite alternate;
 }
 .bg-aurora span:nth-child(3) {
   bottom: -18%; left: 22%;
   background: radial-gradient(circle at center, var(--blob-3) 0%, transparent 66%);
-  animation: drift-3 50s ease-in-out infinite alternate;
+  animation: drift-3 calc(var(--aurora-speed) * 1.14) ease-in-out infinite alternate;
 }
 
 @keyframes drift-1 {
