@@ -430,3 +430,22 @@ kbd {
   animation: line-flow var(--line-flow) linear infinite,
              line-hue  calc(var(--line-flow) * 0.5) ease-in-out infinite;
 }
+
+/* Entry rows arrive in sequence, matching the public grid.
+   Pure CSS so admin.js needs no reveal logic; the reduced-motion block
+   in style.css switches it off. */
+.admin-row {
+  animation: rise-in .45s cubic-bezier(.2, .7, .3, 1) both;
+}
+.admin-row:nth-child(1) { animation-delay: 0ms; }
+.admin-row:nth-child(2) { animation-delay: 50ms; }
+.admin-row:nth-child(3) { animation-delay: 100ms; }
+.admin-row:nth-child(4) { animation-delay: 150ms; }
+.admin-row:nth-child(5) { animation-delay: 200ms; }
+.admin-row:nth-child(n+6) { animation-delay: 250ms; }
+
+.image-item { animation: rise-in .4s cubic-bezier(.2, .7, .3, 1) both; }
+.panel, .deploy-bar, .tabs { animation: rise-in .45s cubic-bezier(.2, .7, .3, 1) both; }
+.deploy-bar { animation-delay: 0ms; }
+.tabs       { animation-delay: 50ms; }
+.panel      { animation-delay: 100ms; }

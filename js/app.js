@@ -90,15 +90,120 @@
   }
 
   /* ---------------------------------------------------------
+     Motion helpers
+     Every effect below is decorative: if the browser lacks the API, or
+     the visitor asked for reduced motion, the page still works exactly
+     the same — it just arrives without the movement.
+     --------------------------------------------------------- */
+
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  var revealObserver = null;
+
+  // Fade elements up as they scroll into view, staggered by their index.
+  function observeReveal(nodes) {
+    if (!nodes.length) return;
+
+    if (prefersReducedMotion() || !window.IntersectionObserver) {
+      nodes.forEach(function (n) { n.classList.add('is-in'); });
+      return;
+    }
+
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          revealObserver.unobserve(entry.target); // reveal once, then forget
+        });
+      }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 });
+    }
+    nodes.forEach(function (n) { revealObserver.observe(n); });
+  }
+
+  // Feed the pointer position to the card under the cursor, so its
+  // highlight follows the mouse. One delegated listener, rAF-throttled.
+  function initPointerSheen() {
+    if (prefersReducedMotion()) return;
+    var pending = null;
+
+    el.grid.addEventListener('pointermove', function (ev) {
+      var card = ev.target.closest && ev.target.closest('.card');
+      if (!card) return;
+      if (pending) return;
+      pending = requestAnimationFrame(function () {
+        pending = null;
+        var r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((ev.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--my', ((ev.clientY - r.top) / r.height * 100) + '%');
+      });
+    }, { passive: true });
+  }
+
+  // Condense the header once the page is scrolled.
+  function initHeaderScroll() {
+    var header = document.querySelector('.site-header');
+    var ticking = false;
+    function update() {
+      ticking = false;
+      header.classList.toggle('is-scrolled', window.scrollY > 12);
+      updateReadProgress();
+    }
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }, { passive: true });
+    update();
+  }
+
+  // Fill the progress line according to how far down the entry we are.
+  function updateReadProgress() {
+    var bar = el.readProgress;
+    if (!bar || bar.hidden) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    bar.firstElementChild.style.setProperty('--p', p);
+  }
+
+  // Cross-fade between views where the browser supports it.
+  function withTransition(fn) {
+    if (document.startViewTransition && !prefersReducedMotion()) {
+      document.startViewTransition(fn);
+    } else {
+      fn();
+    }
+  }
+
+  // Placeholder cards so the grid has shape while entries load.
+  function showSkeletons(count) {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < count; i++) {
+      var sk = document.createElement('div');
+      sk.className = 'skeleton';
+      sk.innerHTML = '<div class="skeleton-bar sk-cover"></div>' +
+                     '<div class="skeleton-bar sk-line short"></div>' +
+                     '<div class="skeleton-bar sk-line"></div>' +
+                     '<div class="skeleton-bar sk-line mid"></div>';
+      frag.appendChild(sk);
+    }
+    el.grid.innerHTML = '';
+    el.grid.setAttribute('aria-busy', 'true');
+    el.grid.appendChild(frag);
+  }
+
+  /* ---------------------------------------------------------
      Loading entries
      --------------------------------------------------------- */
 
   function loadEntries() {
-    show(el.stateLoading, true);
+    show(el.stateLoading, false);
     show(el.stateEmpty, false);
     show(el.stateError, false);
     show(el.stateNomatch, false);
-    el.grid.innerHTML = '';
+    showSkeletons(6);
 
     // GitHub Pages caches aggressively — bust it on every load.
     return fetch(ENTRIES_URL + '?t=' + Date.now(), { cache: 'no-store' })
@@ -127,6 +232,8 @@
       })
       .catch(function (err) {
         show(el.stateLoading, false);
+        el.grid.innerHTML = '';
+        el.grid.removeAttribute('aria-busy');
         el.errorDetail.textContent = err.message;
         show(el.stateError, true);
         el.resultCount.textContent = '';
@@ -244,8 +351,16 @@
       : visible.length + ' of ' + state.entries.length + ' entries';
 
     var frag = document.createDocumentFragment();
-    visible.forEach(function (entry) { frag.appendChild(buildCard(entry)); });
+    var cards = visible.map(function (entry, i) {
+      var card = buildCard(entry);
+      card.classList.add('reveal');
+      card.style.setProperty('--i', Math.min(i, 8)); // cap the stagger so long lists stay snappy
+      frag.appendChild(card);
+      return card;
+    });
+    el.grid.removeAttribute('aria-busy');
     el.grid.appendChild(frag);
+    observeReveal(cards);
   }
 
   function buildCard(entry) {
@@ -351,6 +466,7 @@
 
     show(el.stateNotfound, false);
     show(el.viewDetail, true);
+    show(el.readProgress, true);
 
     document.title = (entry.title || 'Entry') + ' · Portfolio';
 
@@ -386,6 +502,7 @@
     }
 
     el.detailBody.innerHTML = renderMarkdown(entry.body);
+    updateReadProgress();
 
     // Gallery = all images except the one already shown as the cover.
     var gallery = (entry.images || []).filter(function (src) { return src && src !== entry.coverImage; });
@@ -401,6 +518,7 @@
         img.alt = '';
         img.loading = 'lazy';
         link.appendChild(img);
+        link.style.setProperty('--i', el.detailGallery.children.length);
         el.detailGallery.appendChild(link);
       });
       show(el.detailGalleryWrap, true);
@@ -414,6 +532,7 @@
   function showList() {
     show(el.viewDetail, false);
     show(el.stateNotfound, false);
+    show(el.readProgress, false);
     show(el.viewList, true);
     document.title = 'Portfolio';
   }
@@ -463,11 +582,18 @@
       detailCoverImg: $('detail-cover-img'),
       detailBody: $('detail-body'),
       detailGallery: $('detail-gallery'),
-      detailGalleryWrap: $('detail-gallery-wrap')
+      detailGalleryWrap: $('detail-gallery-wrap'),
+      readProgress: $('read-progress')
     };
 
     initTheme();
-    $('theme-toggle').addEventListener('click', toggleTheme);
+    $('theme-toggle').addEventListener('click', function () {
+      var btn = this;
+      toggleTheme();
+      // let the icon flip, then reset so the next click animates again
+      btn.classList.add('flip');
+      setTimeout(function () { btn.classList.remove('flip'); }, 450);
+    });
     $('year').textContent = new Date().getFullYear();
 
     // Make links inside rendered Markdown open in a new tab.
@@ -509,7 +635,11 @@
       loadEntries().then(route);
     });
 
-    window.addEventListener('hashchange', route);
+    // Cross-fade between the list and an entry where the browser allows it.
+    window.addEventListener('hashchange', function () { withTransition(route); });
+
+    initPointerSheen();
+    initHeaderScroll();
 
     loadEntries().then(route);
   }
