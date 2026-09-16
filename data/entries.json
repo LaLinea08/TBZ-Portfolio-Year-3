@@ -1,5 +1,23 @@
 [
   {
+    "id": "mu3yik56-0a84ud",
+    "slug": "my-chosen-travel-destination",
+    "title": "My chosen travel destination",
+    "date": "2026-09-16",
+    "subject": "Travel",
+    "tags": [
+      "Travel"
+    ],
+    "summary": "This is my choosen Location to Travel to",
+    "body": "## My Pick:\n\n## Oulu, Finland\n\n\n![screenshot](images/best-travel-places-of-2026/screenshot.png)\n\n## Why?\n\nI woud want to Travel to Finland because im not the biggest fan of hot weather. I like snow and skiing so i guess this woud be a perfect vacation spot for me.\n\n## What woud i do?\n\nI woud probably go skiing most of the time but i woud also go hiking in the snow. basically everything that can be done outside and in the snow.\n\n",
+    "coverImage": "images/my-chosen-travel-destination/screenshot.png",
+    "images": [
+      "images/my-chosen-travel-destination/screenshot.png"
+    ],
+    "createdAt": "2026-09-16T10:27:29.761Z",
+    "updatedAt": "2026-09-16T10:27:29.761Z"
+  },
+  {
     "id": "mt1eypm5-2xksvt",
     "slug": "test",
     "title": "Test",
