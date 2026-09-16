@@ -1,6 +1,7 @@
 {
-  "setup": "blue",
+  "About Me": "purple",
+  "Travel": "red",
   "guide": "green",
-  "test": "amber",
-  "About Me": "purple"
+  "setup": "blue",
+  "test": "amber"
 }
