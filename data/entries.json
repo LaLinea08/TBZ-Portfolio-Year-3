@@ -1,5 +1,24 @@
 [
   {
+    "id": "mvs0u2va-d0c56s",
+    "slug": "my-project",
+    "title": "My Project",
+    "date": "2026-10-28",
+    "subject": "Me",
+    "tags": [
+      "Va",
+      "Tech"
+    ],
+    "summary": "In this portfolio entry, I talk about my final school project.",
+    "body": "## Building a PC Case for My Mini-PCs\n\nI chose this project because, at the moment, the mini-PCs I own are sitting on a random shelf where they collect dust. Because of that, I decided to build a case that can fit all of my mini-PCs. This should help protect them from dust. I also plan to add some fans to keep the PCs cool.\n\n## What State Is the Project In?\n\nAt the moment, I have just started thinking about a design for the whole case and how everything should fit inside it.\n\n## My Resources\n\nRight now, there aren't many resources to show because I don't need much information for designing the case. However, later in the project, when I start building the case and working with wood, I will need to research how to do that properly.\n\n## Open Questions\n\n1. How should I manage the cables inside the case?\n2. How should I handle the power supplies for the PCs?\n3. Which parts can be 3D printed?\n4. How much space will everything need?\n5. Will temperatures be a problem?\n\n## Action Plan\n\n![screenshot 2026 10 28 104034](images/my-project/screenshot-2026-10-28-104034.png)\n",
+    "coverImage": "images/my-project/screenshot-2026-10-28-104034.png",
+    "images": [
+      "images/my-project/screenshot-2026-10-28-104034.png"
+    ],
+    "createdAt": "2026-10-28T11:18:37.619Z",
+    "updatedAt": "2026-10-28T11:18:37.619Z"
+  },
+  {
     "id": "mu3yik56-0a84ud",
     "slug": "my-chosen-travel-destination",
     "title": "My chosen travel destination",
