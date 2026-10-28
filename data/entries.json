@@ -18,24 +18,6 @@
     "updatedAt": "2026-09-16T10:27:29.761Z"
   },
   {
-    "id": "mt1eypm5-2xksvt",
-    "slug": "test",
-    "title": "Test",
-    "date": "2026-08-20",
-    "subject": "test",
-    "tags": [
-      "test"
-    ],
-    "summary": "test",
-    "body": "test\n![111633405](images/111633405.jpg)\n",
-    "coverImage": "images/111633405.jpg",
-    "images": [
-      "images/111633405.jpg"
-    ],
-    "createdAt": "2026-08-20T11:04:57.271Z",
-    "updatedAt": "2026-08-26T07:43:12.372Z"
-  },
-  {
     "id": "demo-2",
     "slug": "welcome-to-the-portfolio",
     "title": "Welcome to the portfolio",
